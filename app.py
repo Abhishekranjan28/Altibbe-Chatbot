@@ -69,15 +69,26 @@ def save_chat_as_pdf(chat_history):
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
+
+    # Add the Roboto font (ensure the font file paths are correct)
+    pdf.add_font('Roboto', '', './Roboto-Regular.ttf', uni=True)
+    pdf.add_font('Roboto-Bold', 'B', './Roboto-Bold.ttf', uni=True)
+    pdf.set_font('Roboto', '', 12)
+
+    # Title of the document
     pdf.cell(200, 10, txt="Chat History", ln=True, align="C")
     pdf.ln(10)
+
+    # Add chat history to the PDF
     for chat in chat_history:
         role = "You" if chat['role'] == 'user' else "Bot"
         pdf.multi_cell(0, 10, txt=f"{role}: {chat['message']}")
         pdf.ln(2)
+
+    # Output the generated PDF file to a BytesIO buffer
     pdf_output = io.BytesIO()
-    pdf.output(pdf_output)
+    pdf_data = pdf.output(dest='S').encode('latin1')  # Output as a string and encode
+    pdf_output.write(pdf_data)
     pdf_output.seek(0)
     return pdf_output
 
@@ -124,6 +135,14 @@ def send_email_via_smtp(content, recipient_email):
 # Streamlit app
 st.set_page_config(page_title="Chatbot-Report Generator", layout="wide")
 
+col_left, col_right = st.columns([3, 3])
+
+with col_left:
+    st.image("Altibbe logo dark.png", width=150)
+
+with col_right:
+    st.image("Hedamo.jpg", width=200)
+    
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
@@ -167,7 +186,7 @@ if st.button("Send"):
             bot_response = query_gemini(user_input)
 
         st.session_state.chat_history.append({"role": "bot", "message": bot_response})
-        st.experimental_rerun()
+        st.rerun()
 
 # Download buttons
 if st.session_state.chat_history:
