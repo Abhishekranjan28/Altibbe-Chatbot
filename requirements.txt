@@ -5,7 +5,15 @@ python-dotenv
 python-docx
 faiss-cpu
 huggingface-hub
-torch 
+torch
 torchvision
 torchaudio
 sentence-transformers
+pillow
+transformers
+scikit-learn
+numpy
+pandas
+fpdf
+langchain-community
+pypdf
